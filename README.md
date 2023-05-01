@@ -9,12 +9,15 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
 - [About the Author](#about-the-author)
 
+---
 
 ## Installation
 
 ```python
 pip3 install nexus_utils
 ```
+
+---
 
 ## package_utils.py
 
@@ -41,14 +44,16 @@ Example:
 ***import_relative('flat_file_loader', 'src.utils', 'config_reader', alias='cr')***
 
 Arguments:
- * package_root_name(str): Folder name of package root folder.  Meant to be used with the output of the "add_package_to_path()" function
- * module_path(str): Dot-separated path from the package root to the library to be imported
- * import_name(str): Name of the object to be imported.  Can be a ".py" file name, or a function within a ".py" file (in the latter case, make sure the ".py" file name is part of the "module_path" above)
-* alias(str): Optional alias for the imported library or function
+ * ***package_root_name(str):*** Folder name of package root folder.  Meant to be used with the output of the "add_package_to_path()" function
+ * ***module_path(str):*** Dot-separated path from the package root to the library to be imported
+ * ***import_name(str):*** Name of the object to be imported.  Can be a ".py" file name, or a function within a ".py" file (in the latter case, make sure the ".py" file name is part of the "module_path" above)
+* ***alias(str):*** Optional alias for the imported library or function
 
-Allows for importing package-relative libraries or functions given a programmatically-determined package root folder.  Useful for programs with multiple entry points.
+Allows for importing package-relative libraries or functions given a programmatically-determined package root folder.  Useful for programs with multiple entry points and utilities called from multiple libraries.
 
 ***Important note: Pylance will show an error since the imports are done at runtime.  These can be avoided by attaching "# type: ignore" to any line using one of these relative imports.***
+
+---
 
 ## About the Author
 
