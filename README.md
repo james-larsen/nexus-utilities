@@ -3,23 +3,23 @@ This package is meant to hold various useful utilities for functionality I find 
 
 ## Table of Contents
 
-- [Installation](<## Installation>)
+- [Installation](#installation)
 - Packages
-    - [package_utils.py](<## package_utils.py>)
-        - [add_package_to_path()](<### **add_package_to_path()**>)
-        - [import_relative()](<### **import_relative(package_root_name, module_path, import_name, alias=None)**>)
+    - [package_utils.py](#package_utils)
+        - [add_package_to_path()](#add_package_to_path)
+        - [import_relative()](#import_relative)
 
-## Installation
+## Installation {#installation}
 
 ```python
 pip3 install nexus_utils
 ```
 
-## package_utils.py
+## package_utils.py {#package_utils}
 
 This module contains functions for working with Python packages.
 
-### **add_package_to_path()**
+### **add_package_to_path()** {#add_package_to_path}
 
 Arguments:
  * None
@@ -32,7 +32,7 @@ Programmatically determines the most likely root folder of the current running p
 
 In the case of a tie, it takes the folder deeper into the path.  The returned "package_root_name" is meant to be used with the "import_relative()" function below.
 
-### **import_relative(package_root_name, module_path, import_name, alias=None)**
+### **import_relative(package_root_name, module_path, import_name, alias=None)** {#import_relative}
 
 Example:  
 ***/app/flat_file_loader/src/utils/config_reader.py***
