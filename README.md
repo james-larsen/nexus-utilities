@@ -1,25 +1,26 @@
-# nexus_utils
+# nexus_utils<!-- omit in toc -->
 This package is meant to hold various useful utilities for functionality I find myself using across multiple projects.  I will try to keep this documentation updated as I expand the toolkit.  Feel free to use these if you find them valuable and I welcome any feedback.
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
 - [Installation](#installation)
-- Packages
-    - [package_utils.py](#package_utils)
-        - [add_package_to_path()](#add_package_to_path)
-        - [import_relative()](#import_relative)
+- [package\_utils.py](#package_utilspy)
+  - [**add\_package\_to\_path()**](#add_package_to_path)
+  - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
+- [About the Author](#about-the-author)
 
-## Installation {#installation}
+
+## Installation
 
 ```python
 pip3 install nexus_utils
 ```
 
-## package_utils.py {#package_utils}
+## package_utils.py
 
 This module contains functions for working with Python packages.
 
-### **add_package_to_path()** {#add_package_to_path}
+### **add_package_to_path()**
 
 Arguments:
  * None
@@ -32,7 +33,7 @@ Programmatically determines the most likely root folder of the current running p
 
 In the case of a tie, it takes the folder deeper into the path.  The returned "package_root_name" is meant to be used with the "import_relative()" function below.
 
-### **import_relative(package_root_name, module_path, import_name, alias=None)** {#import_relative}
+### **import_relative(package_root_name, module_path, import_name, alias=None)**
 
 Example:  
 ***/app/flat_file_loader/src/utils/config_reader.py***
