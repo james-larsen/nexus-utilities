@@ -14,10 +14,10 @@ jobs:
         with:
           ref: v2.x
           
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '16.x'
           
       - name: Set up Python
         uses: actions/setup-python@v2
