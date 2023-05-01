@@ -11,7 +11,8 @@ setup(
     url='https://github.com/james-larsen/nexus_utils',
     packages=find_packages(),
     install_requires=[
-        'boto3>=1.26.45'
+        'boto3>=1.26.45',
+        'twine>=3.4.0'
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
