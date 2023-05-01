@@ -3,11 +3,11 @@ This package is meant to hold various useful utilities for functionality I find 
 
 ## Table of Contents
 
-- [Installation](<##Installation>)
+- [Installation](<## Installation>)
 - Packages
-    - [package_utils.py](<##package_utils.py>)
-        - [add_package_to_path()](<###**add_package_to_path()**>)
-        - [import_relative()](<###**import_relative(package_root_name, module_path, import_name, alias=None)**>)
+    - [package_utils.py](<## package_utils.py>)
+        - [add_package_to_path()](<### **add_package_to_path()**>)
+        - [import_relative()](<### **import_relative(package_root_name, module_path, import_name, alias=None)**>)
 
 ## Installation
 
