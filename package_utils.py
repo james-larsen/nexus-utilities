@@ -6,7 +6,7 @@ import inspect
 def add_package_to_path():
     """Programmatically determine the most likely root of the current running program, add its parent to the path, and return the root folder name"""
     # Define the list of common package root files and folders with lowercase
-    package_root_items = ["src", "tests", "templates", "docs", "readme.md", "license.txt", ".gitignore", "pyproject.toml", "requirements.txt", "poetry.lock", "setup.py", "manifest.in", ".editorconfig"]
+    package_root_items = ["src", "tests", "templates", "docs", "dist", "build", "readme.md", "license.txt", ".gitignore", "pyproject.toml", "requirements.txt", "poetry.lock", "setup.py", "manifest.in", ".editorconfig"]
 
     # Initialize a dictionary to store the count of package root items found in each directory
     item_counts = {}

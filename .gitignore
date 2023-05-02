@@ -4,6 +4,7 @@ main*.py
 * - Copy*.*
 ~$*.xls*
 *.url*
+/archive/**
 
 # Temporary exclusions
 
