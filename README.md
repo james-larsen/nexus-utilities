@@ -17,6 +17,8 @@ This package is meant to hold various useful utilities for functionality I find 
 pip3 install nexus-utilities
 ```
 
+After installation, use "import nexus_utils" to access the various functions.
+
 ---
 
 ## package_utils.py
