@@ -14,7 +14,7 @@ This package is meant to hold various useful utilities for functionality I find 
 ## Installation
 
 ```python
-pip3 install nexus_utils
+pip3 install nexus-utilities
 ```
 
 ---
