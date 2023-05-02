@@ -3,6 +3,7 @@ main*.py
 [Ignore]/
 * - Copy*.*
 ~$*.xls*
+*.url*
 
 # Temporary exclusions
 
