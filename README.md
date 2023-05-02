@@ -1,4 +1,4 @@
-# nexus_utils<!-- omit in toc -->
+# nexus-utilities<!-- omit in toc -->
 This package is meant to hold various useful utilities for functionality I find myself using across multiple projects.  I will try to keep this documentation updated as I expand the toolkit.  Feel free to use these if you find them valuable and I welcome any feedback.
 
 ## Table of Contents <!-- omit in toc -->
