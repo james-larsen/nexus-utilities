@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nexus-utilities',
-    version='0.1.9',
+    version='0.1.10',
     author='James Larsen',
     author_email='james.larsen42@gmail.com',
     description='Common python utilities',
