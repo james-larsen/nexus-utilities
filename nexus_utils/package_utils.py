@@ -42,6 +42,8 @@ def add_package_to_path():
         package_root_dir = os.path.dirname(max_item_count_dir)
         os.environ["PATH"] += os.pathsep + package_root_dir
         package_root_name = os.path.basename(max_item_count_dir)
+        os.environ["PATH"] += os.pathsep + package_root_name
+        print(f'PATH: {os.environ["PATH"]}')
         return package_root_name
     else:
         print("Could not find package root directory")
@@ -50,6 +52,7 @@ def add_package_to_path():
 def import_relative(package_root_name, module_path, import_name, alias=None):
     """Import a relative library dynamically.  Accepts 'package_root_name' from 'add_package_to_path()' function"""
     module_name = f"{package_root_name}.{module_path}"
+    print(f'module_name: {module_name}')
     module = __import__(module_name, fromlist=[import_name])
 
     # Get the imported object
