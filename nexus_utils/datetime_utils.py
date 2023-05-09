@@ -25,7 +25,7 @@ def get_current_timestamp():
                          
     return [current_timestamp, filename_timestamp, log_timestamp]
 
-def getDuration(then, now=datetime.datetime.now()):#, interval = "default"):
+def get_duration(then, now=datetime.datetime.now()):#, interval = "default"):
     """Return the duration between two timestamps"""
     # Returns a duration as specified by variable interval
     # Functions, except totalDuration, returns [quotient, remainder]
