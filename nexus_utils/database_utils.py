@@ -13,7 +13,7 @@ import re
 
 #%%
 # def build_engine(config_path, config_entry, password_method="keyring"):
-def build_engine(connect_type, server_address, server_port, database_name, user_name, password, schema=None):
+def build_engine(connect_type, server_address, server_port, database_name, user_name, password)#, schema=None):
     """Build SQL Alchemy Engine based on input parameters"""
 
     # db_config = cr.read_config_file(config_path)
@@ -36,8 +36,8 @@ def build_engine(connect_type, server_address, server_port, database_name, user_
     #     from flat_file_loader.src.utils import password_custom as pw
     # password = pw.get_password(user_name, secret_key)
     conn_string = f'{connect_type}://{user_name}:{password}@{server_address}:{server_port}/{database_name}'
-    if schema is not None:
-        conn_string += f'?schema={schema}'
+    # if schema is not None:
+        # conn_string += f'?schema={schema}'
 
     engine = create_engine(conn_string)
 
