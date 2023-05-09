@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nexus-utilities',
-    version='0.1.12',
+    version='0.2.1',
     author='James Larsen',
     author_email='james.larsen42@gmail.com',
     description='Common python utilities',
@@ -12,6 +12,10 @@ setup(
     packages=['nexus_utils'],
     install_requires=[
         'boto3>=1.26.45',
+        'configparser >=5.3.0',
+        'sqlalchemy>=1.4.44',
+        'keyring>=23.13.1',
+        'chardet>=3.0.4',
         'twine>=3.4.0'
     ],
     classifiers=[

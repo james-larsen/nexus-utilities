@@ -44,7 +44,7 @@ def add_package_to_path():
         package_root_name = os.path.basename(max_item_count_dir)
         os.environ["PATH"] += os.pathsep + package_root_name
         print(f'PATH: {os.environ["PATH"]}')
-        return package_root_name
+        return package_root_dir, package_root_name
     else:
         print("Could not find package root directory")
         return None
