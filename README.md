@@ -16,7 +16,7 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**add\_package\_to\_path()**](#add_package_to_path)
   - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
 - [password\_utils.py](#password_utilspy)
-  - [**get\_password(password\_method, password\_key, account\_name=None, access\_key=None, secret\_key=None, endpoint\_url=None, password\_path=None, encoding='utf-8')**](#get_passwordpassword_method-password_key-account_namenone-access_keynone-secret_keynone-endpoint_urlnone-password_pathnone-encodingutf-8)
+  - [**get\_password(password\_method, password\_key, account\_name=None, access\_key=None, secret\_key=None, endpoint\_url=None, region\_name=None, password\_path=None, encoding='utf-8')**](#get_passwordpassword_method-password_key-account_namenone-access_keynone-secret_keynone-endpoint_urlnone-region_namenone-password_pathnone-encodingutf-8)
 - [About the Author](#about-the-author)
 
 ---
@@ -156,7 +156,7 @@ Allows for importing package-relative libraries or functions given a programmati
 
 This module contains functions for working with passwords and other sensitive information.
 
-### **get_password(password_method, password_key, account_name=None, access_key=None, secret_key=None, endpoint_url=None, password_path=None, encoding='utf-8')**
+### **get_password(password_method, password_key, account_name=None, access_key=None, secret_key=None, endpoint_url=None, region_name=None, password_path=None, encoding='utf-8')**
 
 Arguments:
  * ***password_method (str):*** Desired password method.  Options include:
@@ -168,6 +168,7 @@ Arguments:
  * ***access_key (str):*** AWS access key
  * ***secret_key (str):*** AWS secret key
  * ***endpoint_url (str):*** AWS endpoint url
+ * ***region_name (str):*** AWS region name
  * ***password_path (str):*** AWS path to secret (primarily used by AWS Parameter Store)
  * ***encoding (str):*** Password encoding.  Supports the following, but uses utf-8 as the default: 'utf-8', 'ascii', 'latin-1', 'utf-16'
 
@@ -183,12 +184,14 @@ AWS Parameter Store:
 access_key = 'AWS_SSM_ACCESS_KEY_ID'
 secret_key = 'AWS_SSM_SECRETACCESS_KEY_ID'
 endpoint_url = 'AWS_SSM_ENDPOINT_URL'
+region_name = 'AWS_SSM_REGION_NAME'
 password_path = 'AWS_SSM_PASSWORD_PATH'
 
 AWS Secrets Manager:
 access_key = 'AWS_SM_SECRET_ACCESS_KEY'
 secret_key = 'AWS_SM_ACCESS_KEY_ID'
 endpoint_url = 'AWS_SM_ENDPOINT_URL'
+region_name = 'AWS_SM_REGION_NAME'
 password_key = 'AWS_SM_PASSWORD_KEY'
 ```
 
