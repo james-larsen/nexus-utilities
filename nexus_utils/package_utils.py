@@ -3,7 +3,7 @@ import sys
 import os
 import inspect
 
-def add_package_to_path():
+def add_package_to_path(verbose=False):
     """Programmatically determine the most likely root of the current running program, add its parent to the path, and return the root folder name"""
     # Define the list of common package root files and folders with lowercase
     package_root_items = ["src", "tests", "templates", "docs", "dist", "build", "readme.md", "license.txt", ".gitignore", "pyproject.toml", "requirements.txt", "poetry.lock", "setup.py", "manifest.in", ".editorconfig"]
@@ -42,8 +42,9 @@ def add_package_to_path():
         package_root_dir = os.path.dirname(max_item_count_dir)
         os.environ["PATH"] += os.pathsep + package_root_dir
         package_root_name = os.path.basename(max_item_count_dir)
-        os.environ["PATH"] += os.pathsep + package_root_name
-        print(f'PATH: {os.environ["PATH"]}')
+        os.environ["PATH"] += os.pathsep + package_root_dir + os.sep + package_root_name
+        if verbose == True:
+            print(f'PATH: {os.environ["PATH"]}')
         return package_root_dir, package_root_name
     else:
         print("Could not find package root directory")
