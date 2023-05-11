@@ -17,6 +17,8 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
 - [password\_utils.py](#password_utilspy)
   - [**get\_password(password\_method, password\_key, account\_name=None, access\_key=None, secret\_key=None, endpoint\_url=None, region\_name=None, password\_path=None, encoding='utf-8')**](#get_passwordpassword_method-password_key-account_namenone-access_keynone-secret_keynone-endpoint_urlnone-region_namenone-password_pathnone-encodingutf-8)
+- [string\_utils.py](#string_utilspy)
+  - [**cleanse\_string(string, remove\_symbols=True, title\_to\_snake\_case=False, hyphen\_to\_underscore=True, period\_to\_underscore=True, to\_upper=False, to\_lower=True)**](#cleanse_stringstring-remove_symbolstrue-title_to_snake_casefalse-hyphen_to_underscoretrue-period_to_underscoretrue-to_upperfalse-to_lowertrue)
 - [About the Author](#about-the-author)
 
 ---
@@ -196,6 +198,36 @@ password_key = 'AWS_SM_PASSWORD_KEY'
 ```
 
 ---
+
+## string_utils.py
+
+This module contains functions for working with strings.
+
+### **cleanse_string(string, remove_symbols=True, title_to_snake_case=False, hyphen_to_underscore=True, period_to_underscore=True, to_upper=False, to_lower=True)**
+
+Arguments:
+ * ***string (str):*** String to be cleansed
+ * ***remove_symbols (bool):*** Remove some symbols, and replace others with "_"
+ * ***title_to_snake_case (bool):*** Convert TitleCase to Snake_Case
+ * ***hyphen_to_underscore (bool):*** Change hypehens to underscores
+ * ***period_to_underscore (bool):*** Change periods to underscores
+ * ***to_upper (bool):*** Change string to uppercase
+ * ***to_lower (bool):*** Change string to lowercase
+
+Returns:
+ * ***string (str):*** Transformed string value
+
+Below is additional details about what each transformation does:
+ * ***remove_symbols*** - Removes or converts to "_" based on the below rules.  Will also attempt to preserve multiple underscores in the original field without adding to them (using the '†' symbol).  Eg. "Field__(Name)" will become "Field__Name", not "Field___Name"
+     * characters_to_replace_with_underscore  
+' ', ':', ';', '&', '@', '^', '+', '=', '~', '/', '\\', '|', '(', '{', '[', '<'
+     * characters_to_remove  
+',', '`', '#', '$', '%', '*', ''', '"', '?', '!', ')', '}', ']', '>'
+ * ***title_to_snake_case*** - Convert TitleCase to SnakeCase.  Attempts to account for clusters of uppercase letters.  For example, "SalesForNBCUniversal" will return "sales_for_nbc_universal"
+ * ***hyphen_to_underscore*** - Converts "-" to "_", otherwise leaves them alone
+ * ***period_to_underscore*** - Converts "." to "_", otherwise leaves them alone
+ * ***to_upper*** - Converts string to UPPERCASE
+ * ***to_lower*** - Converts string to lowercase, takes precedence over "to_upper"
 
 ## About the Author
 
