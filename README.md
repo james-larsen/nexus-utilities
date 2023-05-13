@@ -11,7 +11,8 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**clean\_sql\_statement(sql\_statement)**](#clean_sql_statementsql_statement)
 - [datetime\_utils.py](#datetime_utilspy)
   - [**get\_current\_timestamp()**](#get_current_timestamp)
-  - [**getDuration(then, now=datetime.datetime.now())**](#getdurationthen-nowdatetimedatetimenow)
+  - [**get\_duration(then, now=datetime.datetime.now())**](#get_durationthen-nowdatetimedatetimenow)
+  - [**determine\_date\_format(date\_list)**](#determine_date_formatdate_list)
 - [package\_utils.py](#package_utilspy)
   - [**add\_package\_to\_path()**](#add_package_to_path)
   - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
@@ -97,7 +98,7 @@ Returns:
 
 Calculates the current time in UTC timezone and returns 3 variations to be used for different purposes.
 
-### **getDuration(then, now=datetime.datetime.now())**
+### **get_duration(then, now=datetime.datetime.now())**
 
 Arguments:
  * ***then (datetime Class):*** Datetime Class object representing the lower limit of a time comparison
