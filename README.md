@@ -112,6 +112,26 @@ Returns:
 
 Calculates the difference between two timestamps.  Provides absolute number of total days, hours, minutes, and seconds, as well as a string representation of the normalized difference, Eg. "5 days, 4 hours, 3 minutes, 2 seconds" or "32 seconds"
 
+### **determine_date_format(date_list)**
+
+Arguments:
+ * ***date_list (list):*** List of dates to analyze
+
+Returns:
+ * ***date_format (str):*** Determined date format in plain text (Eg. "MM/DD/YYYY")
+ * ***format_string (str)*** Date format string to be passed into the Python "datetime" library (Eg. "%m/%d/%Y")
+
+Attempts to isolate the date portion of a list of string values, and return the likely format.  Some sample return values are "MM/DD/YYYY", "DD-MM-YYYY or "YYYYMMDD".  The primary value of this function is to tell MM/DD from DD/MM formats, which many more traditional means of date parsing may struggle with.
+
+A few notes:
+
+* Only delimiters supported are "-", "/" and no delimiter
+* It is assumed that all dates in a given list are the same format.  For example, the function will not work properly if a list contains both "05/06/2000" and "05-07-2000"
+* Timestamp portions are ignored
+* Only works for numerical dates.  For example, will not work with "June 5, 2000"
+* Limited support for 2 digit years
+* Requires some form of differentiation between the included dates.  For example, if all dates in the list are "05/06/2000", it will be impossible to infer the date format.  However, if it sees "05/06/2000", "05/07/2000" and "05/08/2000" in the list, it will assume a "MM/DD" format based on the limited variance in one segment, and a higher variance in another segment
+
 ---
 
 ## package_utils.py
