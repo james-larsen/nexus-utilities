@@ -5,6 +5,14 @@ import inspect
 
 def add_package_to_path(verbose=False):
     """Programmatically determine the most likely root of the current running program, add its parent to the path, and return the root folder name"""
+    # Get the path of the calling script
+    calling_script = inspect.stack()[1].filename
+    calling_script_path = os.path.abspath(calling_script)
+    calling_script_dir = os.path.dirname(calling_script_path)
+
+    # Set the working directory to the calling script's directory
+    os.chdir(calling_script_dir)
+    
     # Define the list of common package root files and folders with lowercase
     package_root_items = ["src", "tests", "templates", "docs", "dist", "build", "readme.md", "license.txt", ".gitignore", "pyproject.toml", "requirements.txt", "poetry.lock", "setup.py", "manifest.in", ".editorconfig"]
 
