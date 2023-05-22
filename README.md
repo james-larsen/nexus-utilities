@@ -13,6 +13,9 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**get\_current\_timestamp()**](#get_current_timestamp)
   - [**get\_duration(then, now=datetime.datetime.now())**](#get_durationthen-nowdatetimedatetimenow)
   - [**determine\_date\_format(date\_list)**](#determine_date_formatdate_list)
+- [flatfile\_utils.py](#flatfile_utilspy)
+  - [**detect\_encoding(file\_path)**](#detect_encodingfile_path)
+  - [**analyze\_dataframe(df)**](#analyze_dataframedf)
 - [package\_utils.py](#package_utilspy)
   - [**add\_package\_to\_path()**](#add_package_to_path)
   - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
@@ -111,7 +114,7 @@ Returns:
  * ***seconds_between (int):*** Seconds between two timestamps
  * ***duration_string (str):*** String representation of difference between two timestamps
 
-Calculates the difference between two timestamps.  Provides absolute number of total days, hours, minutes, and seconds, as well as a string representation of the normalized difference, Eg. "5 days, 4 hours, 3 minutes, 2 seconds" or "32 seconds"
+Calculates the difference between two timestamps.  Provides absolute number of total days, hours, minutes, and seconds, as well as a string representation of the normalized difference, Eg. "5 days, 4 hours, 3 minutes, 2 seconds" or "32 seconds".
 
 ### **determine_date_format(date_list)**
 
@@ -124,7 +127,7 @@ Returns:
 
 Attempts to isolate the date portion of a list of string values, and return the likely format.  Some sample return values are "MM/DD/YYYY", "DD-MM-YYYY or "YYYYMMDD".  The primary value of this function is to tell MM/DD from DD/MM formats, which many more traditional means of date parsing may struggle with.
 
-A few notes:
+***Notes:***
 
 * Only delimiters supported are "-", "/" and no delimiter
 * It is assumed that all dates in a given list are the same format.  For example, the function will not work properly if a list contains both "05/06/2000" and "05-07-2000"
@@ -132,6 +135,47 @@ A few notes:
 * Only works for numerical dates.  For example, will not work with "June 5, 2000"
 * Limited support for 2 digit years
 * Requires some form of differentiation between the included dates.  For example, if all dates in the list are "05/06/2000", it will be impossible to infer the date format.  However, if it sees "05/06/2000", "05/07/2000" and "05/08/2000" in the list, it will assume a "MM/DD" format based on the limited variance in one segment, and a higher variance in another segment
+
+---
+
+## flatfile_utils.py
+
+This module contains functions for working with flat files.
+
+### **detect_encoding(file_path)**
+
+Arguments:
+ * ***file_path (str):*** Path to flat file to read
+
+Returns:
+ * ***encoding (str):*** String representation of encoding, such as 'utf-8' or 'ascii'
+
+Attempts to detect the encoding of a flat file.  It will scan the first 2,000 records of the file.  If the result is 'ascii', it will scan the entire file to confirm.  This is to prevent a false positive of 'ascii' if a non-ascii character happens to not be present in the first 2,000 rows.
+
+### **analyze_dataframe(df)**
+
+Arguments:
+ * ***df (pandas dataframe):*** Pandas dataframe of the flat file to be analyzed
+
+Returns:
+ * ***df_results (pandas dataframe):*** Pandas dataframe representing the analysis results
+
+Performs basic field profiling for a flat file read into a pandas dataframe.  Results come in 3-column groupings:
+
+|||||||
+| :--- | :--- | :--- | :--- | :--- | :--- |
+|*{column_name_01}*|*{summary_metric}*|&nbsp;|*{column_name_02}*|*{summary_metric}*|&nbsp;|
+|Distinct Values|Occurrences|&nbsp;|Distinct Values|Occurrences|&nbsp;|
+|*{value_01}*|*{occurrence_count}*|&nbsp;|*{value_01}*|*{occurrence_count}*|&nbsp;|
+|*{value_02}*|*{occurrence_count}*|&nbsp;|*{value_02}*|*{occurrence_count}*|&nbsp;|
+|...|...|&nbsp;|*{value_03}*|*{occurrence_count}*|&nbsp;|
+|*{value_50}*|*{occurrence_count}*|&nbsp;|&nbsp;|&nbsp;|&nbsp;|
+|More than 50 distinct values|Distinct Values: *{count}*|&nbsp;|&nbsp;|&nbsp;|&nbsp;|
+|||||||
+
+***Notes:***
+ * *{summary_metric}*: Will either be "Max Length: {value}" for strings, or "Max Value: {value}" for numeric values and dates.  Can be useful for estimating field size when designing tables
+ * Will show up to 50 distinct values, sorted by number of occurrences descending.  If there are more than 50 distinct values, a note will be shown at the bottom of the list, along with the total number of distinct values
 
 ---
 

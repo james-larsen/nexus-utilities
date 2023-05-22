@@ -1,16 +1,28 @@
 """Flatfile-related utilities"""
 import chardet
+import pandas as pd
+from openpyxl import Workbook
 
 def detect_encoding(file_path):
     """Attempt to determine the encoding of a file located at the provided file path"""
     # Open the file in binary mode to prevent any decoding errors
     with open(file_path, 'rb') as f:
-        # Read the first 10 rows of the file
-        content = b''.join([f.readline() for _ in range(10)])
+        # Read the first 2000 rows
+        content = b''.join([f.readline() for _ in range(2000)])
         # Determine the encoding of the content
         result = chardet.detect(content)
 
-    return result['encoding']
+    encoding = result['encoding']
+
+    # If the detected encoding is ASCII, read the entire file to confirm the encoding
+    if encoding.lower() == 'ascii':
+        with open(file_path, 'r', encoding=encoding) as f:
+            content = f.read()
+            # Determine the encoding of the entire file
+            result = chardet.detect(content)
+            encoding = result['encoding']
+
+    return encoding
 
 def analyze_dataframe(df):
     """Analyze distinct values in a dataframe"""
@@ -53,18 +65,22 @@ def analyze_dataframe(df):
 
         # Get distinct values and their counts
         col_values = df[col].copy()
+        if col_values.dtype == float:
+            col_values = col_values.apply(lambda x: "{:.10f}".format(x).rstrip('0').rstrip('.') if not pd.isna(x) else '<NULL>')
         col_values = col_values.fillna("<NULL>")
         value_counts = col_values.value_counts(dropna=False).replace({pd.NA: "<NULL>", pd.NaT: "<NULL>", "nan": "<NULL>"})
         if len(value_counts) > 50:
             # If there are more than 50 distinct values, store top 50 and "More than 50 distinct values"
             top_50_values = value_counts.nlargest(50).to_dict()
             # top_50_values['More than 50 distinct values'] = str(len(value_counts) - 50)
-            column_dict['Distinct Values'] = {str(k): str(format(int(v), ',')) if v != '' else str(v) for k, v in top_50_values.items()}
+            # column_dict['Distinct Values'] = {str(k): str(format(int(v), ',')) if v != '' else str(v) for k, v in top_50_values.items()}
+            column_dict['Distinct Values'] = {('{:.10f}'.format(k) if isinstance(k, float) else str(k)): str(v) if v != '' else str(v) for k, v in top_50_values.items()}
             # top_50_values['More than 50 distinct values'] = f'Distinct Values: {distinct_value_count_string}'
             column_dict['Distinct Values']['More than 50 distinct values'] = f'Distinct Values: {distinct_value_count_string}'
 
         else:
-            column_dict['Distinct Values'] = {str(k): str(format(int(v), ',')) if v != '' else str(v) for k, v in value_counts.items()}
+            # column_dict['Distinct Values'] = {str(k): str(format(int(v), ',')) if v != '' else str(v) for k, v in value_counts.items()}
+            column_dict['Distinct Values'] = {('{:.10f}'.format(k) if isinstance(k, float) else str(k)): str(v) if v != '' else str(v) for k, v in top_50_values.items()}
 
         # Add the column dictionary to the analysis dictionary
         analysis_dict[col] = column_dict
