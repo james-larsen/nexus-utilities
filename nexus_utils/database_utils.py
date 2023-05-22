@@ -68,8 +68,11 @@ def clean_sql_statement(sql_statement):
 
     sql_statements = sql_statement.split(';')
 
+    sql_statements = [statement.strip() for statement in sql_statements]
+
     # Remove blank statements
-    sql_statements.remove("")
+    if "" in sql_statements:
+        sql_statements.remove("")
     #print(len(sql_statements))
 
     # Add ';' to the end of each statement
