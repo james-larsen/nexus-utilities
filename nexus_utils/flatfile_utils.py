@@ -80,7 +80,7 @@ def analyze_dataframe(df):
 
         else:
             # column_dict['Distinct Values'] = {str(k): str(format(int(v), ',')) if v != '' else str(v) for k, v in value_counts.items()}
-            column_dict['Distinct Values'] = {('{:.10f}'.format(k) if isinstance(k, float) else str(k)): str(v) if v != '' else str(v) for k, v in top_50_values.items()}
+            column_dict['Distinct Values'] = {('{:.10f}'.format(k) if isinstance(k, float) else str(k)): str(v) if v != '' else str(v) for k, v in value_counts.items()}
 
         # Add the column dictionary to the analysis dictionary
         analysis_dict[col] = column_dict
