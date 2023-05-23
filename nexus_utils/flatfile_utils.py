@@ -16,7 +16,7 @@ def detect_encoding(file_path):
 
     # If the detected encoding is ASCII, read the entire file to confirm the encoding
     if encoding.lower() == 'ascii':
-        with open(file_path, 'r', encoding=encoding) as f:
+        with open(file_path, 'rb') as f:
             content = f.read()
             # Determine the encoding of the entire file
             result = chardet.detect(content)
