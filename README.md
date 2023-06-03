@@ -8,6 +8,8 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**read\_config\_file(config\_filepath)**](#read_config_fileconfig_filepath)
 - [database\_utils.py](#database_utilspy)
   - [**build\_engine(connect\_type, server\_address, server\_port, server\_name, user\_name, password, schema=None)**](#build_engineconnect_type-server_address-server_port-server_name-user_name-password-schemanone)
+  - [**check\_engine\_read(engine, schema=None, table\_name=None)**](#check_engine_readengine-schemanone-table_namenone)
+  - [**check\_engine\_write\_delete(engine, schema=None)**](#check_engine_write_deleteengine-schemanone)
   - [**clean\_sql\_statement(sql\_statement)**](#clean_sql_statementsql_statement)
 - [datetime\_utils.py](#datetime_utilspy)
   - [**get\_current\_timestamp()**](#get_current_timestamp)
@@ -19,9 +21,11 @@ This package is meant to hold various useful utilities for functionality I find 
 - [package\_utils.py](#package_utilspy)
   - [**add\_package\_to\_path()**](#add_package_to_path)
   - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
+  - [**extract\_from\_error(full\_error\_message, error\_keyword)**](#extract_from_errorfull_error_message-error_keyword)
 - [password\_utils.py](#password_utilspy)
   - [**get\_password(password\_method, password\_key, account\_name=None, access\_key=None, secret\_key=None, endpoint\_url=None, region\_name=None, password\_path=None, encoding='utf-8')**](#get_passwordpassword_method-password_key-account_namenone-access_keynone-secret_keynone-endpoint_urlnone-region_namenone-password_pathnone-encodingutf-8)
 - [string\_utils.py](#string_utilspy)
+  - [**string\_to\_bool(bool\_string)**](#string_to_boolbool_string)
   - [**cleanse\_string(string, remove\_symbols=True, title\_to\_snake\_case=False, hyphen\_to\_underscore=True, period\_to\_underscore=True, to\_upper=False, to\_lower=True)**](#cleanse_stringstring-remove_symbolstrue-title_to_snake_casefalse-hyphen_to_underscoretrue-period_to_underscoretrue-to_upperfalse-to_lowertrue)
 - [About the Author](#about-the-author)
 
@@ -72,6 +76,30 @@ Returns:
  * ***engine (sqlalchemy.engine.Engine Class):*** SQLAlchemy Engine Class for interacting with the database
 
 Creates a SQLAlchemy Engine Class object for interacting with your database.
+
+### **check_engine_read(engine, schema=None, table_name=None)**
+
+Arguments:
+ * ***engine (sqlalchemy.engine.Engine Class):*** Engine object to attempt connection
+ * ***schema (str):*** Optional argument to specify the schema to test
+ * ***table_name (str):*** Optional argument to specify a table to test  
+*Note:*  Both schema and table_name must be provided to utilize that functionality
+
+Returns:
+ * ***result (str):*** "Success" or the text content of any error encountered
+
+Checks that an established SQLAlchemy Engine Class object has select access to the default schema.  If a schema and table_name is provided, ity will use a "SELECT COUNT(*) FROM {schema}.{table_name}" to confirm, otherwise it utilizes a simple "SELECT 1" from the default schema.
+
+### **check_engine_write_delete(engine, schema=None)**
+
+Arguments:
+ * ***engine (sqlalchemy.engine.Engine Class):*** Engine object to attempt connection
+ * ***schema (str):*** Optional argument to specify the schema to test
+
+Returns:
+ * ***result (str):*** "Success" or the text content of any error encountered
+
+Checks that an established SQLAlchemy Engine Class object has create, write, delete and drop permissions on the specified schema.  It does this by creating a "nexus_access_test" table, inserting into it, updating it, deleting from it, then dropping it.  Helpful for checking the functionality of a connection object designed for ETL activities.
 
 ### **clean_sql_statement(sql_statement)**
 
@@ -217,6 +245,17 @@ Allows for importing package-relative libraries or functions given a programmati
 
 ***Important note: Pylance will show an error since the imports are done at runtime.  These can be avoided by attaching "# type: ignore" to any line using one of these relative imports.***
 
+### **extract_from_error(full_error_message, error_keyword)**
+
+Arguments:
+ * ***full_error_message (str):*** Full error text 
+ * ***error_keyword (str):*** Dot-separated path from the package root to the library to be imported
+
+Returns:
+ * ***error_message (str):***  Single line error message
+
+Accepts a full error message, identifies the first line containing a provided keyword, and returns only that line.  Can be helpful if you want to capture the most important portion of an error without printing the entire stack trace.
+
 ---
 
 ## password_utils.py
@@ -267,6 +306,18 @@ password_key = 'AWS_SM_PASSWORD_KEY'
 ## string_utils.py
 
 This module contains functions for working with strings.
+
+### **string_to_bool(bool_string)**
+
+Arguments:
+ * ***bool_string (str):*** String to attempt to convert to a boolean
+
+Returns:
+ * ***string (bool or str):*** Will return booleans True or False if conversion is successful, or a string explaining why the conversion failed, either due to an invalid input type provided, or an unrecognized value
+
+Takes a string input and attempts to interpret it as a boolean value based on the below recognized values (after converting to lowercase):
+* **True:**  ['true', 't', 'yes', 'y', 'yep', 'yeah', 'affirmative', 'x', '1', '1.0', 'on', 'enabled']
+* **False:**  ['false', 'f', 'no', 'n', 'nope', 'nah', '', '0', '0.0', 'off', 'disabled']
 
 ### **cleanse_string(string, remove_symbols=True, title_to_snake_case=False, hyphen_to_underscore=True, period_to_underscore=True, to_upper=False, to_lower=True)**
 

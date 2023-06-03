@@ -76,3 +76,11 @@ def import_relative(package_root_name, module_path, import_name, alias=None):
 
     # Return the imported object
     # return obj
+
+def extract_from_error(full_error_message, error_keyword):
+    """Extract a single line from error message based on keyword"""
+    
+    error_lines = full_error_message.splitlines()
+    error_message = next((line for line in error_lines if error_keyword in line), None)
+    
+    return error_message

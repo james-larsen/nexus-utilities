@@ -278,64 +278,62 @@ def determine_date_format(date_list):
 
 #%%
 # Left in for testing purposes
-# if __name__ == "__main__":
-"""
-import pandas as pd
+if __name__ == "__main__":
+  import pandas as pd
 
-file_path = r''
+  file_path = r''
 
-if file_path:
-  # Read the .txt file into a DataFrame
-  df = pd.read_csv(file_path, delimiter='\t', encoding='utf-16')
+  if file_path:
+    # Read the .txt file into a DataFrame
+    df = pd.read_csv(file_path, delimiter='\t', encoding='utf-16')
 
-  date_list = df['DownloadDatePST'].tolist()
-#%%
-determine_date_format(date_list)
+    date_list = df['DownloadDatePST'].tolist()
+  #%%
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['13/5/2023', '5/5/2023', '17/10/2023']
-determine_date_format(date_list)
+  date_list = ['13/5/2023', '5/5/2023', '17/10/2023']
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['5/5/2023', '6/5/2023', '7/5/2023']
-determine_date_format(date_list)
+  date_list = ['5/5/2023', '6/5/2023', '7/5/2023']
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['5/5/2023', '5/6/2023', '5/7/2023']
-determine_date_format(date_list)
+  date_list = ['5/5/2023', '5/6/2023', '5/7/2023']
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['2023-5-5', '2023-5-6', '2023-5-17']
-determine_date_format(date_list)
+  date_list = ['2023-5-5', '2023-5-6', '2023-5-17']
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['2023-5-15', '2023-5-16', '2023-5-17']
-determine_date_format(date_list)
+  date_list = ['2023-5-15', '2023-5-16', '2023-5-17']
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['20230515', '20230516', '20230517']
-determine_date_format(date_list)
+  date_list = ['20230515', '20230516', '20230517']
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['05152023', '05162023', '05172023']
-determine_date_format(date_list)
+  date_list = ['05152023', '05162023', '05172023']
+  determine_date_format(date_list)
 
-#%%
+  #%%
 
-date_list = ['051523', '051623', '051723']
-print(determine_date_format(date_list))
+  date_list = ['051523', '051623', '051723']
+  print(determine_date_format(date_list))
 
-#%%
+  #%%
 
-date_list = ['05052023', '05052023', '05052023']
-print(determine_date_format(date_list))
+  date_list = ['05052023', '05052023', '05052023']
+  print(determine_date_format(date_list))
 
-#%%
-"""
+  #%%
