@@ -18,6 +18,7 @@ This package is meant to hold various useful utilities for functionality I find 
 - [flatfile\_utils.py](#flatfile_utilspy)
   - [**detect\_encoding(file\_path)**](#detect_encodingfile_path)
   - [**analyze\_dataframe(df)**](#analyze_dataframedf)
+  - [**check\_primary\_key\_fields(df, field\_list, print\_results=True)**](#check_primary_key_fieldsdf-field_list-print_resultstrue)
 - [package\_utils.py](#package_utilspy)
   - [**add\_package\_to\_path()**](#add_package_to_path)
   - [**import\_relative(package\_root\_name, module\_path, import\_name, alias=None)**](#import_relativepackage_root_name-module_path-import_name-aliasnone)
@@ -204,6 +205,20 @@ Performs basic field profiling for a flat file read into a pandas dataframe.  Re
 ***Notes:***
  * *{summary_metric}*: Will either be "Max Length: {value}" for strings, or "Max Value: {value}" for numeric values and dates.  Can be useful for estimating field size when designing tables
  * Will show up to 50 distinct values, sorted by number of occurrences descending.  If there are more than 50 distinct values, a note will be shown at the bottom of the list, along with the total number of distinct values
+
+### **check_primary_key_fields(df, field_list, print_results=True)**
+
+Arguments:
+ * ***df (pandas dataframe):*** Dataframe to check
+ * ***field_list (list):*** List of fields to check for duplicate values
+ * ***print_results (bool):*** Whether to print results to the terminal
+
+Returns:
+ * ***is_unique (bool):*** Indicator of whether the provided set of fields are unique in the data frame
+ * ***no_nulls (bool):*** Indicator of whether the provided set of fields have any NULL values
+ * ***sample_issue_rows (pandas dataframe):*** Sample rows from the data frame showing duplicates or NULLs
+
+Checks a data frame given a list of fields to see if they have duplicates or contain any NULL values.  Useful when trying to determine a Primary Key for a table to land data into.
 
 ---
 

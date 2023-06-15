@@ -2,25 +2,40 @@
 import chardet
 import pandas as pd
 from openpyxl import Workbook
+import gzip
 
 def detect_encoding(file_path):
     """Attempt to determine the encoding of a file located at the provided file path"""
-    # Open the file in binary mode to prevent any decoding errors
-    with open(file_path, 'rb') as f:
-        # Read the first 2000 rows
-        content = b''.join([f.readline() for _ in range(2000)])
-        # Determine the encoding of the content
-        result = chardet.detect(content)
+    # Check if the file path ends with '.gz' to identify gzipped files
+    if file_path.endswith('.gz'):
+        # Open the gzipped file in binary mode
+        with gzip.open(file_path, 'rb') as f:
+            # Read the first 2000 rows
+            content = b''.join([f.readline() for _ in range(2000)])
+    else:
+        # Open the file in binary mode to prevent any decoding errors
+        with open(file_path, 'rb') as f:
+            # Read the first 2000 rows
+            content = b''.join([f.readline() for _ in range(2000)])
 
+    # Determine the encoding of the content
+    result = chardet.detect(content)
     encoding = result['encoding']
 
     # If the detected encoding is ASCII, read the entire file to confirm the encoding
     if encoding.lower() == 'ascii':
-        with open(file_path, 'rb') as f:
-            content = f.read()
-            # Determine the encoding of the entire file
-            result = chardet.detect(content)
-            encoding = result['encoding']
+        if file_path.endswith('.gz'):
+            # Open the gzipped file in binary mode
+            with gzip.open(file_path, 'rb') as f:
+                content = f.read()
+        else:
+            # Open the file in binary mode to prevent any decoding errors
+            with open(file_path, 'rb') as f:
+                content = f.read()
+
+        # Determine the encoding of the entire file
+        result = chardet.detect(content)
+        encoding = result['encoding']
 
     return encoding
 
@@ -116,3 +131,65 @@ def analyze_dataframe(df):
     df_results = pd.DataFrame(wb.active.values)
 
     return df_results
+
+def check_primary_key_fields(df, field_list, print_results=True):
+    """Accepts a data frame and a list of field to determine if there are duplicates"""
+    
+    if not set(field_list).issubset(df.columns):
+        missing_fields = set(field_list) - set(df.columns)
+        missing_fields_string = ', '.join(f'"{field}"' for field in missing_fields)
+        print(f'The following fields are missing in the DataFrame: {missing_fields_string}')
+        return None, None, None
+    
+    is_unique = not df.duplicated(subset=field_list, keep=False).any()
+    
+    for field in field_list:
+        no_nulls = not df[field].isnull().any()
+
+    field_names = ', '.join(f'"{field}"' for field in field_list)
+
+    sample_duplicate_rows = pd.DataFrame()
+    sample_null_rows = pd.DataFrame()
+
+    if is_unique:
+        if print_results:
+            print(f'The field(s) {field_names} have no duplicate values.')
+    else:
+        duplicate_rows = df[df.duplicated(subset=field_list, keep=False)]
+        duplicate_first_row_values = duplicate_rows[field_list].head(1).values.tolist()[0]
+        matching_rows = df.copy()
+        
+        for field, value in zip(field_list, duplicate_first_row_values):
+            matching_rows = matching_rows[matching_rows[field] == value]
+        
+        matching_rows.sort_values(by=field_list, inplace=True)
+        sample_duplicate_rows = matching_rows.head(2)
+        
+        if print_results:
+            print(f'The field(s) {field_names} have duplicate values.')
+            print("Sample:")
+            print(df.columns.to_list())
+            for _, row in sample_duplicate_rows.iterrows():
+                print(row.values.tolist())
+
+    if no_nulls:
+        if print_results:
+            print(f'The field(s) {field_names} have no NULL values.')
+    else:
+        for field in field_list:
+            if df[field].isnull().any():
+                null_row_index = df[df[field].isnull()].index[0]
+                if null_row_index not in sample_null_rows.index.tolist():
+                    sample_null_rows = pd.concat([sample_null_rows, pd.DataFrame([df.loc[null_row_index].values], columns=df.columns)])
+                
+        if print_results:
+            print(f'The field(s) {field_names} have NULL values.')
+            print("Sample:")
+            print(df.columns.to_list())
+            sample_null_rows.fillna("<NULL>", inplace=True)
+            for _, row in sample_null_rows.iterrows():
+                print(row.values.tolist())
+    
+    sample_issue_rows = pd.concat([sample_duplicate_rows, sample_null_rows], ignore_index=True)
+    
+    return is_unique, no_nulls, sample_issue_rows
