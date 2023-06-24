@@ -1,5 +1,7 @@
 """Database-related utilities"""
 #%%
+import os
+from pathlib import Path
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 # from . import config_reader as cr
@@ -15,6 +17,61 @@ import traceback
 # pylint: disable=trailing-whitespace
 
 #%%
+def build_engine_from_env(env_file_path=None):
+    """Accept a path to an .env file and build a SQL Alchemy engine object"""
+
+    if env_file_path is not None:
+        if isinstance(env_file_path, str):
+            env_file_path = env_file_path
+        elif isinstance(env_file_path, Path):
+            env_file_path = str(env_file_path)
+        else:
+            print(f'env_file_path must be a string or a Path object.  Type is: {type(env_file_path)}')
+            return None
+        
+        if not os.path.isfile(env_file_path):
+            print(f"The specified .env file '{env_file_path}' does not exist.")
+            return None
+    
+        env_vars = {}
+        
+        try:
+            with open(env_file_path, 'r') as file:
+                for line in file:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        key, value = line.split('=', 1)
+                        env_vars[key] = value
+        except Exception as e:
+            print(f'Error parsing .env file: {e}')
+            return None
+    else:
+        env_vars = os.environ
+
+    NEXUS_TARGET_DB_CONN_TYPE = env_vars.get('NEXUS_TARGET_DB_CONN_TYPE')
+    NEXUS_TARGET_DB_SERVER = env_vars.get('NEXUS_TARGET_DB_SERVER')
+    NEXUS_TARGET_DB_PORT = env_vars.get('NEXUS_TARGET_DB_PORT')
+    NEXUS_TARGET_DB_DATABASE = env_vars.get('NEXUS_TARGET_DB_DATABASE')
+    NEXUS_TARGET_DB_USERNAME = env_vars.get('NEXUS_TARGET_DB_USERNAME')
+    NEXUS_TARGET_DB_PASSWORD = env_vars.get('NEXUS_TARGET_DB_PASSWORD')
+
+    engine = build_engine(
+        connect_type=NEXUS_TARGET_DB_CONN_TYPE, 
+        server_address=NEXUS_TARGET_DB_SERVER, 
+        server_port=NEXUS_TARGET_DB_PORT,
+        database_name=NEXUS_TARGET_DB_DATABASE,
+        user_name=NEXUS_TARGET_DB_USERNAME,
+        password=NEXUS_TARGET_DB_PASSWORD
+        )
+    
+    test_result = check_engine_read(engine)
+
+    if test_result != 'Success':
+        print(f'Engine read test failed: {test_result}')
+        return None
+    else:
+        return engine
+
 # def build_engine(config_path, config_entry, password_method="keyring"):
 def build_engine(connect_type, server_address, server_port, database_name, user_name, password):#, schema=None):
     """Build SQL Alchemy Engine based on input parameters"""

@@ -29,6 +29,7 @@ def cleanse_string(
     title_to_snake_case=False, 
     hyphen_to_underscore=True, 
     period_to_underscore=True, 
+    space_to_underscore=True, 
     to_upper=False, 
     to_lower=True
 ):
@@ -36,7 +37,7 @@ def cleanse_string(
 
     if isinstance(string, str):
         if remove_symbols:
-            characters_to_replace_with_underscore = [' ',':',';','&','@','^','+','=','~','/','\\','|','(','{','[','<']
+            characters_to_replace_with_underscore = [':',';','&','@','^','+','=','~','/','\\','|','(','{','[','<']
             characters_to_remove = [',','`','#','$','%','*','\'','"','?','!',')','}',']','>']
             
             string = string.replace('_', '†')
@@ -60,6 +61,9 @@ def cleanse_string(
 
         if period_to_underscore:
             string = string.replace('.', '_')
+
+        if space_to_underscore:
+            string = string.replace(' ', '_')
         
         if to_upper:
             string = string.upper()

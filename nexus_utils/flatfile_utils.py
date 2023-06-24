@@ -1,8 +1,12 @@
 """Flatfile-related utilities"""
+#%%
+import os
 import chardet
 import pandas as pd
 from openpyxl import Workbook
 import gzip
+
+#%%
 
 def detect_encoding(file_path):
     """Attempt to determine the encoding of a file located at the provided file path"""
@@ -38,6 +42,52 @@ def detect_encoding(file_path):
         encoding = result['encoding']
 
     return encoding
+
+def extract_file_extension(filename, last_only=False):
+    extension_found = False
+    extension = ''
+    exclusions = ['.data','.script','.file','.image']
+    if os.path.isabs(filename) or os.path.sep in filename:
+        filename = os.path.basename(filename)
+    
+    if '.' not in filename:
+        return 'Invalid filename'#, extension_found
+    
+    if last_only:
+        extension = os.path.splitext(filename)[1]
+        extension_found = True
+        return extension#, extension_found
+    
+    parts = filename.split('.')
+    
+    if len(parts) == 2 and (len(parts[0]) == 0 or len(parts[1]) == 0):
+        return 'No Extension'#, extension_found
+    
+    working_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(working_dir, 'references', 'known_file_extensions.txt')
+
+    with open(file_path, 'r') as file:
+        # extensions = [ext[1:] if ext.startswith('.') else ext for ext in file.read().splitlines()]
+        extensions = [ext[1:] if ext.startswith('.') else ext for ext in file.read().splitlines() if ext not in exclusions]
+
+    match_string = None
+    
+    for part in parts[1:]:
+        if part in extensions:
+            match_string = part
+            break
+
+    if match_string is None:
+        return 'Unknown Extension'#, extension_found
+    
+    match_index = filename.find('.' + match_string)
+    extension = filename[match_index:]
+
+    if extension:
+        extension_found = True
+        return extension#, extension_found
+    else:
+        return 'Unknown Extension'#, extension_found
 
 def analyze_dataframe(df):
     """Analyze distinct values in a dataframe"""
@@ -193,3 +243,43 @@ def check_primary_key_fields(df, field_list, print_results=True):
     sample_issue_rows = pd.concat([sample_duplicate_rows, sample_null_rows], ignore_index=True)
     
     return is_unique, no_nulls, sample_issue_rows
+
+#%%
+
+if __name__ == '__main__':
+    # filename = 'Testfile.txt.gz'
+    # print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    # filename = 'Test.file.txt.gz'
+    # print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    filename = 'my.data.csv.gz'
+    print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    filename = 'my.report.docx.template'
+    print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    filename = 'my.archive.tar.gz'
+    print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    filename = 'my.image.jpg.thumbnail'
+    print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    filename = 'my.script.py.txt'
+    print(f'{filename}\n{extract_file_extension(filename, True)}\n\n')
+
+    # filename = 'My.test.file.backup.txt.gz'
+    # print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    # filename = r'C:\test_folder\My.test.file.backup.txt.gz'
+    # print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    # filename = r'C:\test_folder'
+    # print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    # filename = 'C:\\test_folder\\My.test.file.backup.txt.gz'
+    # print(f'{filename}\n{extract_file_extension(filename)}\n\n')
+
+    pass
+
+    #%%

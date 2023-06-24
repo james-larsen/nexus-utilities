@@ -1,5 +1,7 @@
 main*.py
 !main.py
+email_test.py
+*_bkup*.*
 [Ignore]/
 * - Copy*.*
 ~$*.xls*

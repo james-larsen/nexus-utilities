@@ -7,6 +7,7 @@ This package is meant to hold various useful utilities for functionality I find 
 - [config\_utils.py](#config_utilspy)
   - [**read\_config\_file(config\_filepath)**](#read_config_fileconfig_filepath)
 - [database\_utils.py](#database_utilspy)
+  - [**build\_engine\_from\_env(env\_file\_path=None)**](#build_engine_from_envenv_file_pathnone)
   - [**build\_engine(connect\_type, server\_address, server\_port, server\_name, user\_name, password, schema=None)**](#build_engineconnect_type-server_address-server_port-server_name-user_name-password-schemanone)
   - [**check\_engine\_read(engine, schema=None, table\_name=None)**](#check_engine_readengine-schemanone-table_namenone)
   - [**check\_engine\_write\_delete(engine, schema=None)**](#check_engine_write_deleteengine-schemanone)
@@ -15,8 +16,30 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**get\_current\_timestamp()**](#get_current_timestamp)
   - [**get\_duration(then, now=datetime.datetime.now())**](#get_durationthen-nowdatetimedatetimenow)
   - [**determine\_date\_format(date\_list)**](#determine_date_formatdate_list)
+- [email\_handler.py](#email_handlerpy)
+  - [***EmailClient Class***](#emailclient-class)
+    - [**create\_email\_client(provider\_name=None, delivery\_protocol\_name=None, receival\_protocol\_name=None, \*\*kwargs)**](#create_email_clientprovider_namenone-delivery_protocol_namenone-receival_protocol_namenone-kwargs)
+    - [**connect(self)**](#connectself)
+    - [**provider\_name(self)**](#provider_nameself)
+    - [**from\_address(self)**](#from_addressself)
+    - [**add\_message(self, message)**](#add_messageself-message)
+    - [**deliver\_email(self, message)**](#deliver_emailself-message)
+    - [**deliver\_all\_emails(self)**](#deliver_all_emailsself)
+    - [**fetch\_unread\_emails(self)**](#fetch_unread_emailsself)
+    - [**fetch\_attachment(self, message\_uid, attachment\_filename)**](#fetch_attachmentself-message_uid-attachment_filename)
+    - [**disconnect(self)**](#disconnectself)
+  - [***EmailMessage Class***](#emailmessage-class)
+    - [**EmailMessage(from\_address, recipients, subject, body=None, cc=None, bcc=None, content\_type="plain")**](#emailmessagefrom_address-recipients-subject-bodynone-ccnone-bccnone-content_typeplain)
+    - [**add\_attachment(self, filename, file\_data)**](#add_attachmentself-filename-file_data)
+    - [**remove\_attachment(self, filename=None)**](#remove_attachmentself-filenamenone)
+  - [***EmailBody Class***](#emailbody-class)
+    - [**EmailBody(body\_text='')**](#emailbodybody_text)
+    - [**add\_to\_body(self, body\_object\_to\_add, body\_object\_type='str')**](#add_to_bodyself-body_object_to_add-body_object_typestr)
+    - [**wrap\_html\_body(self)**](#wrap_html_bodyself)
+    - [**dataframe\_to\_html(df)**](#dataframe_to_htmldf)
 - [flatfile\_utils.py](#flatfile_utilspy)
   - [**detect\_encoding(file\_path)**](#detect_encodingfile_path)
+  - [**extract\_file\_extension(filename, last\_only=False)**](#extract_file_extensionfilename-last_onlyfalse)
   - [**analyze\_dataframe(df)**](#analyze_dataframedf)
   - [**check\_primary\_key\_fields(df, field\_list, print\_results=True)**](#check_primary_key_fieldsdf-field_list-print_resultstrue)
 - [package\_utils.py](#package_utilspy)
@@ -27,7 +50,7 @@ This package is meant to hold various useful utilities for functionality I find 
   - [**get\_password(password\_method, password\_key, account\_name=None, access\_key=None, secret\_key=None, endpoint\_url=None, region\_name=None, password\_path=None, encoding='utf-8')**](#get_passwordpassword_method-password_key-account_namenone-access_keynone-secret_keynone-endpoint_urlnone-region_namenone-password_pathnone-encodingutf-8)
 - [string\_utils.py](#string_utilspy)
   - [**string\_to\_bool(bool\_string)**](#string_to_boolbool_string)
-  - [**cleanse\_string(string, remove\_symbols=True, title\_to\_snake\_case=False, hyphen\_to\_underscore=True, period\_to\_underscore=True, to\_upper=False, to\_lower=True)**](#cleanse_stringstring-remove_symbolstrue-title_to_snake_casefalse-hyphen_to_underscoretrue-period_to_underscoretrue-to_upperfalse-to_lowertrue)
+  - [**cleanse\_string(string, remove\_symbols=True, title\_to\_snake\_case=False, hyphen\_to\_underscore=True, period\_to\_underscore=True, space\_to\_underscore=True, to\_upper=False, to\_lower=True)**](#cleanse_stringstring-remove_symbolstrue-title_to_snake_casefalse-hyphen_to_underscoretrue-period_to_underscoretrue-space_to_underscoretrue-to_upperfalse-to_lowertrue)
 - [About the Author](#about-the-author)
 
 ---
@@ -61,6 +84,33 @@ Takes a path to a specific .ini file and reads it.  Will also check if there is 
 ## database_utils.py
 
 This module contains functions for working with databases and related functions.
+
+### **build_engine_from_env(env_file_path=None)**
+
+Arguments:
+ * ***env_file_path (str):*** Path to environment file
+
+Returns:
+ * ***engine (sqlalchemy.engine.Engine Class):*** SQLAlchemy Engine Class for interacting with the database
+
+Creates a SQLAlchemy Engine Class object for interacting with your database based on a provided env file.  Note that any file should work, as long as each line follows a "key=value" syntax.  The file should contain the below keys:
+
+```python
+NEXUS_TARGET_DB_CONN_TYPE=postgresql+psycopg2
+NEXUS_TARGET_DB_SERVER=localhost
+NEXUS_TARGET_DB_PORT=5432
+NEXUS_TARGET_DB_DATABASE=database_name
+NEXUS_TARGET_DB_USERNAME=username
+NEXUS_TARGET_DB_PASSWORD=password
+```
+
+***Note:*** If you prefer, instead of passing an environment file, you can ensure the above os variables have been defined through other means.
+
+This builds a SQLAlchemy connection string with the following pattern:
+
+'{**NEXUS_TARGET_DB_CONN_TYPE**}://{**NEXUS_TARGET_DB_USERNAME**}:{**NEXUS_TARGET_DB_PASSWORD**}@{**NEXUS_TARGET_DB_SERVER**}:{**NEXUS_TARGET_DB_PORT**}/{**NEXUS_TARGET_DB_DATABASE**}'
+
+Eg.: 'postgresql+psycopg2://username:password@localhost:5432/database_name'
 
 ### **build_engine(connect_type, server_address, server_port, server_name, user_name, password, schema=None)**
 
@@ -167,6 +217,278 @@ Attempts to isolate the date portion of a list of string values, and return the 
 
 ---
 
+## email_handler.py
+
+This module contains custom classes for handling emails (sending, iterating, retrieving attachments, etc.)  Currently only handles Gmail via SMTP and IMAP, but will be expanded in the future.
+
+### ***EmailClient Class***
+
+The **EmailClient** class represents an email client for sending and receiving emails. It provides functionality for connecting to an email server, sending emails, and fetching email messages.  In its current state, it's primarily designed to send service-style emails in Python applications.
+
+Key Variables:
+
+* **from_address (str):** Email address of email account, determined at time of connection
+* **unread_emails (list):** List of unread emails with associated details, populated by calling the **fetch_unread_emails()** method
+* **email_messages (list):** List of created message objects added using the **add_message()** method
+
+#### **create_email_client(provider_name=None, delivery_protocol_name=None, receival_protocol_name=None, \*\*kwargs)**
+
+<font size=4>Constructor arguments:</font>
+
+* ***provider_name (str):*** Email provider name.  Currently accepts "gmail" or "custom"
+* ***delivery_protocol_name (str):*** Delivery protocol.  Currently accepts "smtp"
+* ***receival_protocol_name (str):*** Receival protocol.  Currently accepts "imap"
+* ***kwargs:***
+    * ***username (str):*** Email account username.  Will use environment variable **NEXUS_EMAIL_USERNAME** if available
+    * ***password (str):*** Email account password.  Will use environment variable **NEXUS_EMAIL_PASSWORD** if available
+    * ***delivery_server (str):*** Server address for the delivery protocol.  Will use provider default if not provided
+    * ***delivery_port (int):*** Server port for the delivery protocol.  Will use provider default if not provided
+    * ***receival_server (str):*** Server address for the receival protocol.  Will use provider default if not provided
+    * ***receival_port (int):*** Server port for the receival protocol.  Will use provider default if not provided
+
+Returns:
+* ***client (EmailClient Class):*** Client for interacting with email server
+
+Example usage:
+```python
+email_client = email_handler.create_email_client(provider_name="gmail", delivery_protocol_name="smtp", receival_protocol_name="imap")
+```
+
+<font size=4>**Instance Methods**</font>
+
+#### **connect(self)**
+
+Arguments: None
+
+Returns: None
+
+Connect to the email server using provided credentials.  Automatically called as part of instantiation.
+
+#### **provider_name(self)**
+
+Arguments: None
+
+Returns:
+* ***provider (str):*** Provider name
+
+Returns the provider name as a string
+
+#### **from_address(self)**
+
+Arguments: None
+
+Returns:
+* ***from_address (str):*** "From" address of connected delivery protocol
+
+Returns the "From" address as a string.  Can be passed in when creating "EmailMessage" objects.
+
+#### **add_message(self, message)**
+
+Arguments:
+ * ***message (EmailMessage Class object):*** Object of EmailMessage Class type storing email message information
+
+Returns: None 
+
+Adds an EmailMessage Class object to the internal list of email messages.
+
+#### **deliver_email(self, message)**
+
+Arguments:
+ * ***message (EmailMessage Class object):*** Object of EmailMessage Class to be delivered
+
+Returns: None 
+
+Delivers an EmailMessage Class object its stored recipients.
+
+#### **deliver_all_emails(self)**
+
+Arguments: None
+
+Returns: None 
+
+Iterates through the email list built using the **add_message** method and delivers all available emails.
+
+#### **fetch_unread_emails(self)**
+
+Arguments: None
+
+Returns: None 
+
+Connects to INBOX of the linked mailbox and downloads all unread emails as dictionaries into an internal list called "unread_emails".  Sample dictionary structure below:
+
+```python
+{
+  'message_uid': '16',
+  'sender': 'service.account@gmail.com',
+  'subject': 'Test Subject',
+  'date': 'Tue, 20 Jun 2023 13:13:51 -0700 (PDT)',
+  'body': 'Test body message\r\n',
+  'num_attachments': 3,
+  'attachments': [
+    {
+      'filename': 'Test Attachment 1.txt',
+      'file_content_extracted': 'True',
+      'file_content': b'Test Attachment text'
+    },
+    {
+      'filename': 'Test Attachment 2.xlsx',
+      'file_content_extracted': 'True',
+      'file_content': b'Excel file byte data'
+    },
+    {
+      'filename': 'test.log',
+      'file_content_extracted': 'True',
+      'file_content': b'This is a test log'
+    }
+  ]
+}
+```
+***Note:*** Attachments of 5 MB or less will have their full content stored in the dictionary with **file_content_extracted == True**, otherwise will contain **"File too large, size: {file_size_kb} KB"** and **file_content_extracted == False**.
+
+#### **fetch_attachment(self, message_uid, attachment_filename)**
+
+Arguments:
+ * ***message_uid (str):*** Unique ID of email message
+ * ***attachment_filename (str):*** Filename of attachment to retrieve
+
+Returns:
+ * ***attachment_content (bytes):*** Decoded byte string of fetched attachment
+
+Retrieves a specified attachment.  Will attempt to retrieve from "unread_emails" if possible, otherwise will retrieve directly from the server.
+
+#### **disconnect(self)**
+
+Arguments: None
+
+Returns: None 
+
+Disconnects engine from the email server.
+
+### ***EmailMessage Class***
+
+The **EmailMessage** class represents an email message to be delivered.
+
+Key Variables:
+
+* **message_id (int):** Unique ID assigned to the message upon creation
+* **message_status (str):** Current status of the email.  Starts as "Created", but can also be "Sent" or "Send Failure"
+* **error_message (str):** Error message logged when send failure occurs
+
+#### **EmailMessage(from_address, recipients, subject, body=None, cc=None, bcc=None, content_type="plain")**
+
+<font size=4>Constructor arguments:</font>
+
+* ***from_address (str):*** "From" email address
+* ***recipients (list):*** List of recipients in the "To" field.  Will also accept a single string value
+* ***subject (str):*** "Subject" text
+* ***body (str):*** "Body" text.  Can be built after instantiation using associated methods
+* ***cc (list):*** List of recipients in the "CC" field.  Will also accept a single string value
+* ***bcc (list):*** List of recipients in the "BCC" field.  Will also accept a single string value
+* ***content_type (str):*** Body text type.  Will accept "plain" or "html"
+
+Returns:
+* ***message (EmailMessage Class):*** Email message object
+
+Example usage:
+```python
+email_message = email_handler.EmailMessage("service.account@gmail.com", ['delivery.address1@email.com', 'delivery.address2@email.com'], subject="Job XYZ encountered an error", bcc='delivery.address3@email.com', content_type='html')
+```
+
+<font size=4>**Instance Methods**</font>
+
+#### **add_attachment(self, filename, file_data)**
+
+Arguments: 
+ * ***filename (str):*** Filename of attachment
+ * ***file_data (bytes):*** Byte data of file content.  Will also accept a local file path, which it will read into byte data
+
+Returns: None
+
+Adds an attachment to the message.
+
+#### **remove_attachment(self, filename=None)**
+
+Arguments: 
+ * ***filename (str):*** Filename of attachment to remove
+
+Returns: None
+
+Removes an attachment from the message.  If no filename is provided, all attachments will be removed from the message.
+
+### ***EmailBody Class***
+
+The **EmailBody** class represents an email message body to be added to an EmailMessage.  Note that this is only intended to be used for HTML-styled email bodies.
+
+Key Variables:
+
+* **body_text (str):** Current text of the body
+* **final_body_text (str):** Final text of body after calling **wrap_html_body()**
+
+#### **EmailBody(body_text='')**
+
+<font size=4>Constructor arguments:</font>
+
+* ***body_text (str):*** Initial body text
+
+Returns:
+* ***body_text (EmailBody Class):*** Email body object
+
+Example usage:
+```python
+email_body = email_handler.EmailBody()
+```
+
+<font size=4>**Instance Methods**</font>
+
+#### **add_to_body(self, body_object_to_add, body_object_type='str')** 
+
+Arguments: 
+ * ***body_object_to_add (multiple):*** Object to be converted and added to body
+ * ***body_object_type (str):*** Object type
+
+Returns: None
+
+Takes a number of object types, converts them to HTML strings, and appends them to the "body_text" (note that two "\<td>" breaks will be added after each element).
+
+Primarily works with the below "body_object_type" values:
+* String: Preserves formatting using "\<pre>\</pre>" tags
+* HTML: Indicates a string containing HTML tags.  Will add the content to the body exactly as provided
+* Dictionary: Dictionary or any dictionary-like object that can be passed into the **json.loads()** function.  Will be formatted using "indent=4"
+* Dataframe: Convert to an HTML table
+
+#### **wrap_html_body(self)** 
+
+Arguments: None
+
+Returns: None
+
+Wraps the current body_text in the below code and sets it as **final_body_text**:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    {body_content}
+</body>
+</html>
+```
+
+<font size=4>**Static Methods**</font>
+
+#### **dataframe_to_html(df)** 
+
+Arguments: 
+ * ***df (pandas dataframe):*** Dataframe to be converted
+
+Returns: 
+ * ***html_table (str):*** HTML string representation of dataframe
+
+Takes a dataframe object and converts it into an HTML table string.
+
+---
+
 ## flatfile_utils.py
 
 This module contains functions for working with flat files.
@@ -180,6 +502,17 @@ Returns:
  * ***encoding (str):*** String representation of encoding, such as 'utf-8' or 'ascii'
 
 Attempts to detect the encoding of a flat file.  It will scan the first 2,000 records of the file.  If the result is 'ascii', it will scan the entire file to confirm.  This is to prevent a false positive of 'ascii' if a non-ascii character happens to not be present in the first 2,000 rows.
+
+### **extract_file_extension(filename, last_only=False)**
+
+Arguments:
+ * ***filename (str):*** Filename to be analyzed
+ * ***last_only (bool):*** Flag of whether to return the extension using the more traditional "everything to the right of the last period" logic
+
+Returns:
+ * ***extension (str):*** Extracted extension of filename with leading "."
+
+The purpose of this function is to attempt to handle more complex filename extensions, like "filename.txt.gz" or "my.file.name.jpg.thumbnail".  In these cases (if last_only is False), the function will return ".txt.gz" and ".jpg.thumbnail", respectively.  It does this by looking for the first segment of the filename matching a master list of approximately 10,000 known file extensions and returning everything from that position until the end of the filename.
 
 ### **analyze_dataframe(df)**
 
@@ -334,7 +667,7 @@ Takes a string input and attempts to interpret it as a boolean value based on th
 * **True:**  ['true', 't', 'yes', 'y', 'yep', 'yeah', 'affirmative', 'x', '1', '1.0', 'on', 'enabled']
 * **False:**  ['false', 'f', 'no', 'n', 'nope', 'nah', '', '0', '0.0', 'off', 'disabled']
 
-### **cleanse_string(string, remove_symbols=True, title_to_snake_case=False, hyphen_to_underscore=True, period_to_underscore=True, to_upper=False, to_lower=True)**
+### **cleanse_string(string, remove_symbols=True, title_to_snake_case=False, hyphen_to_underscore=True, period_to_underscore=True, space_to_underscore=True, to_upper=False, to_lower=True)**
 
 Arguments:
  * ***string (str):*** String to be cleansed
@@ -342,6 +675,7 @@ Arguments:
  * ***title_to_snake_case (bool):*** Convert TitleCase to Snake_Case
  * ***hyphen_to_underscore (bool):*** Change hypehens to underscores
  * ***period_to_underscore (bool):*** Change periods to underscores
+ * ***period_to_underscore (bool):*** Change spaces to underscores
  * ***to_upper (bool):*** Change string to uppercase
  * ***to_lower (bool):*** Change string to lowercase
 
@@ -351,12 +685,13 @@ Returns:
 Below is additional details about what each transformation does:
  * ***remove_symbols*** - Removes or converts to "_" based on the below rules.  Will also attempt to preserve multiple underscores in the original field without adding to them (using the '†' symbol).  Eg. "Field__(Name)" will become "Field__Name", not "Field___Name"
      * characters_to_replace_with_underscore  
-' ', ':', ';', '&', '@', '^', '+', '=', '~', '/', '\\', '|', '(', '{', '[', '<'
+':', ';', '&', '@', '^', '+', '=', '~', '/', '\\', '|', '(', '{', '[', '<'
      * characters_to_remove  
 ',', '`', '#', '$', '%', '*', ''', '"', '?', '!', ')', '}', ']', '>'
  * ***title_to_snake_case*** - Convert TitleCase to SnakeCase.  Attempts to account for clusters of uppercase letters.  For example, "SalesForNBCUniversal" will return "sales_for_nbc_universal"
  * ***hyphen_to_underscore*** - Converts "-" to "_", otherwise leaves them alone
  * ***period_to_underscore*** - Converts "." to "_", otherwise leaves them alone
+ * ***period_to_underscore*** - Converts " " to "_", otherwise leaves them alone
  * ***to_upper*** - Converts string to UPPERCASE
  * ***to_lower*** - Converts string to lowercase, takes precedence over "to_upper"
 
