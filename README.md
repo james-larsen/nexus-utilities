@@ -5,6 +5,7 @@ This package is meant to hold various useful utilities for functionality I find 
 
 - [Installation](#installation)
 - [config\_utils.py](#config_utilspy)
+  - [**process\_env\_file(env\_values)**](#process_env_fileenv_values)
   - [**read\_config\_file(config\_filepath)**](#read_config_fileconfig_filepath)
 - [database\_utils.py](#database_utilspy)
   - [**build\_engine\_from\_env(env\_file\_path=None)**](#build_engine_from_envenv_file_pathnone)
@@ -68,6 +69,16 @@ After installation, use "import nexus_utils" to access the various functions.
 ## config_utils.py
 
 This module contains functions for working with configuration files.  Currently limited to using configparser to read .ini files.
+
+### **process_env_file(env_values)**
+
+Arguments:
+ * ***env_values (str):*** File path to the .env file to be read
+
+Returns:
+ * ***result (str):*** String result of setting environment variables
+
+Takes a path to a specific .env file and adds them to the current session os variables.  Will also attempt to process other reasonable representations of environment variables, such as .txt files, strings with common delimiters, dictionaries, etc.
 
 ### **read_config_file(config_filepath)**
 
