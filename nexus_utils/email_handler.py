@@ -271,10 +271,10 @@ class EmailMessage:
 class EmailBody:
     def __init__(self, body_text=''):
         if body_text and '<pre>' not in body_text:
-            self.body_text = f'<pre>{body_text}</pre>'
+            self.body_text = f'<pre>{body_text}</pre><td><td>'
             self.final_body_text = self.body_text
         else:
-            self.body_text = body_text
+            self.body_text = body_text + '<td><td>'
             self.final_body_text = self.body_text
 
     def __str__(self):
